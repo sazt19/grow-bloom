@@ -16,6 +16,18 @@ class Plant extends Model
         'image',
     ];
 
+    public static function validate(Request $request): void
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'string', 'max:255'],
+            'price' => ['required', 'integer', 'min:0'],
+            'caution' => ['nullable', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'image' => ['nullable', 'string', 'max:255'],
+        ]);
+    }
+
     public function getId(): int
     {
         return $this->attributes['id'] ?? null;

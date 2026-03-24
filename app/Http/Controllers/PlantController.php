@@ -9,42 +9,46 @@ use App\Http\Controllers\Controller;
 
 class PlantController extends Controller
 {
-    public function home(){
+    public function home()
+    {
         return view('home');
     }
 
-    public function create(){
+    public function create()
+    {
         return view('plants.create');
     }
 
-    public function store(Request $request):RedirectResponse{
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'type' => ['required', 'string', 'max:255'],
-            'price' => ['required', 'integer', 'min:0'],
-            'caution' => ['nullable', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
-            'image' => ['nullable', 'string', 'max:255'],
-        ]);
-
-        Plant::create($validated);
+    public function store(Request $request):RedirectResponse
+    {
+        $plant = new Plant();
+        $plant->setName($request->input('name'));
+        $plant->setType($request->input('type'));
+        $plant->setPrice((float) $request->input('price'));
+        $plant->setCaution($request->input('caution'));
+        $plant->setDescription($request->input('description'));
+        $plant->setImage($request->input('image'));
+        $plant->save();
 
         return redirect()
             ->route('plants.create')
             ->with('success', 'Plant created successfully.');
     }
 
-    public function index(){
+    public function index()
+    {
         $plants = Plant::select('id', 'name')->get();
         return view('plants.index', compact('plants'));
     }
 
-    public function show($id){
+    public function show($id)
+    {
         $plant = Plant::findOrFail($id);
         return view('plants.show', compact('plant'));
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         $plant = Plant::findOrFail($id);
         $plant->delete();
 
