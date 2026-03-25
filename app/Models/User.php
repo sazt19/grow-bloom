@@ -1,32 +1,129 @@
 <?php
 
+// Author: Camilo Melo
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Http\Request;
 
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * USER ATTRIBUTES
+     * $this->attributes['id'] - int - primary key
+     * $this->attributes['phone'] - string - user phone
+     * $this->attributes['name'] - string - user name
+     * $this->attributes['password'] - string - user password
+     * $this->attributes['email'] - string - user email
+     * $this->attributes['address'] - string - user address
+     * $this->attributes['role'] - string - user role
+     * $this->attributes['created_at'] - timestamp
+     * $this->attributes['updated_at'] - timestamp
      */
+
+    protected $fillable = [
+        'phone',
+        'name',
+        'password',
+        'email',
+        'address',
+        'role',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // Getters
+    public function getId(): int
+    {
+        return $this->attributes['id'];
+    }
+
+    public function getPhone(): string
+    {
+        return $this->attributes['phone'];
+    }
+
+    public function getName(): string
+    {
+        return $this->attributes['name'];
+    }
+
+    public function getEmail(): string
+    {
+        return $this->attributes['email'];
+    }
+
+    public function getAddress(): string
+    {
+        return $this->attributes['address'];
+    }
+
+    public function getRole(): string
+    {
+        return $this->attributes['role'];
+    }
+
+    public function getCreatedAt(): string
+    {
+        return $this->attributes['created_at'];
+    }
+
+    public function getUpdatedAt(): string
+    {
+        return $this->attributes['updated_at'];
+    }
+
+    // Setters 
+    public function setPhone(string $phone): void
+    {
+        $this->attributes['phone'] = $phone;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->attributes['name'] = $name;
+    }
+
+    public function setEmail(string $email): void
+    {
+        $this->attributes['email'] = $email;
+    }
+
+    public function setAddress(string $address): void
+    {
+        $this->attributes['address'] = $address;
+    }
+
+    public function setRole(string $role): void
+    {
+        $this->attributes['role'] = $role;
+    }
+
+    // Validation 
+    public static function validate(Request $request): void
+    {
+        $request->validate([
+            'phone'    => 'required|string',
+            'name'     => 'required|string',
+            'email'    => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8',
+            'address'  => 'required|string',
+            'role'     => 'required|string',
+        ]);
     }
 }
